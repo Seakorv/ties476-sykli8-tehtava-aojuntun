@@ -25,7 +25,12 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Ints: []
-    m_Floats: []
+    m_Floats:
+    - _BUILTIN_QueueControl: 0
+    - _BUILTIN_QueueOffset: 0
+    - _Height: 1
     m_Colors:
+    - _Bottom_Color: {r: 1, g: 0, b: 0.24644172, a: 1}
     - _Color: {r: 1, g: 0, b: 0, a: 1}
+    - _Top_Color: {r: 0, g: 0.8316326, b: 1, a: 1}
   m_BuildTextureStacks: []
