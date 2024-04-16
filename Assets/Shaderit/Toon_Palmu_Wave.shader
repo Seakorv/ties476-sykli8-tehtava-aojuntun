@@ -1,10 +1,10 @@
-Shader "Unlit/Toon_Juomalasi"
+Shader "Unlit/Toon_Palmu_Wave"
 
 {
     
     Properties
     {
-        _Color("Color", Color) = (0, 0.65, 0, 0.5)
+        _Color("Color", Color) = (0, 0.65, 0, 1)
         _MainTex ("Texture", 2D) = "white" {}
         //Ambient valoa kaikkiin objektin pintoihin tällä
         [HDR]
@@ -22,17 +22,14 @@ Shader "Unlit/Toon_Juomalasi"
     SubShader
     {
         Tags 
-        {
-            "Queue" = "Transparent"
-            "RenderType" = "Transparent" 
+        { 
             "LightMode" = "ForwardBase"
             "PassFlags" = "OnlyDirectional"
         }
         LOD 100
 
-        ZWrite Off
-        Blend SrcAlpha OneMinusSrcAlpha
-        
+        Cull Off
+
         Pass
         {
             CGPROGRAM
@@ -75,10 +72,12 @@ Shader "Unlit/Toon_Juomalasi"
             v2f vert (appdata v)
             {
                 v2f o;
+                v.vertex.z += sin(v.vertex.z + _Time.y) * 0.1;
                 o.pos = UnityObjectToClipPos(v.vertex);
                 o.uv = TRANSFORM_TEX(v.uv, _MainTex);
                 o.worldNormal = UnityObjectToWorldNormal(v.normal);
                 o.viewDir = WorldSpaceViewDir(v.vertex);
+                
                 //Muuttaa verteksin koordinaatit varjoksi maailmaan
                 //automaagisesti. Autolight.cginc:istä napattu
                 TRANSFER_SHADOW(o)
@@ -111,8 +110,7 @@ Shader "Unlit/Toon_Juomalasi"
 
                 // sample the texture
                 float4 sample = tex2D(_MainTex, i.uv);
-                // apply fog
-                UNITY_APPLY_FOG(i.fogCoord, col);
+                
                 return _Color * sample * (_AmbientColor + light + specular + rim);
             }
             ENDCG

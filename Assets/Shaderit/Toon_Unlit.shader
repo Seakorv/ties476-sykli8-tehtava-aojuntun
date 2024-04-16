@@ -28,6 +28,8 @@ Shader "Unlit/Toon_Unlit"
         }
         LOD 100
 
+        Cull Off
+
         Pass
         {
             CGPROGRAM
@@ -35,7 +37,7 @@ Shader "Unlit/Toon_Unlit"
             #pragma fragment frag
             //Alla oleva rikkoo shaderin jostain syystä, tutorialin
             //mukaan pitäisi toimia juuri näin.
-            //#pragma multi_compile_fwdbase 
+            #pragma multi_compile_fwdbase 
 
             #include "UnityCG.cginc"
             #include "Lighting.cginc"
@@ -51,7 +53,7 @@ Shader "Unlit/Toon_Unlit"
             struct v2f
             {
                 float2 uv : TEXCOORD0;
-                float4 vertex : SV_POSITION;
+                float4 pos : SV_POSITION;
                 float3 worldNormal : NORMAL;
                 float3 viewDir : TEXCOORD1;
                 SHADOW_COORDS(2)
@@ -70,10 +72,11 @@ Shader "Unlit/Toon_Unlit"
             v2f vert (appdata v)
             {
                 v2f o;
-                o.vertex = UnityObjectToClipPos(v.vertex);
+                o.pos = UnityObjectToClipPos(v.vertex);
                 o.uv = TRANSFORM_TEX(v.uv, _MainTex);
                 o.worldNormal = UnityObjectToWorldNormal(v.normal);
                 o.viewDir = WorldSpaceViewDir(v.vertex);
+                
                 //Muuttaa verteksin koordinaatit varjoksi maailmaan
                 //automaagisesti. Autolight.cginc:istä napattu
                 TRANSFER_SHADOW(o)
@@ -106,8 +109,7 @@ Shader "Unlit/Toon_Unlit"
 
                 // sample the texture
                 float4 sample = tex2D(_MainTex, i.uv);
-                // apply fog
-                UNITY_APPLY_FOG(i.fogCoord, col);
+                
                 return _Color * sample * (_AmbientColor + light + specular + rim);
             }
             ENDCG
